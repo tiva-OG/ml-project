@@ -1,25 +1,21 @@
 {
-    // "python.formatting.provider": "esbenp.prettier-vscode",
-    // "editor.defaultFormatter": "esbenp.prettier-vscode",
-    // "[python]": {
-    //   "editor.formatOnType": true
-    // },
-    "[python]": {
-        // "editor.defaultFormatter": ""
-    },
-    "editor.formatOnPaste": true,
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "editor.quickSuggestions": {
-        "comments": "inline",
-        "strings": "inline"
-    },
-    "files.autoGuessEncoding": true,
-    "prettier.printWidth": 120,
-    "files.autoSave": "afterDelay",
-    "prettier.tabWidth": 4,
-    "prettier.useTabs": true,
-    "cSpell.words": [
-        "levelname"
-    ]
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter",
+		"editor.formatOnSave": true
+	},
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"editor.formatOnType": true,
+	"editor.quickSuggestions": {
+		"comments": "inline",
+		"strings": "inline"
+	},
+	"files.autoGuessEncoding": true,
+	"prettier.printWidth": 120,
+	"files.autoSave": "afterDelay",
+	"prettier.tabWidth": 4,
+	"prettier.useTabs": true,
+	"cSpell.words": ["levelname"],
+	"python.analysis.autoImportCompletions": true,
+	"python.analysis.typeCheckingMode": "basic"
 }
