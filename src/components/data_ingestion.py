@@ -4,22 +4,24 @@ import pandas as pd
 
 from dataclasses import dataclass
 from sklearn.model_selection import train_test_split
-from src.logger import logging
+from src.components.data_transformation import DataTransformation
+from src.components.data_transformation import DataTransformationConfig
 from src.exception import CustomException
+from src.logger import logging
 
 
 @dataclass
 class DataIngestionConfig:
-    raw_data_path = os.path.join("artifact", "data.csv")
-    train_data_path = os.path.join("artifact", "train.csv")
-    test_data_path = os.path.join("artifact", "test.csv")
+    raw_data_path = os.path.join("artifacts", "data.csv")
+    train_data_path = os.path.join("artifacts", "train.csv")
+    test_data_path = os.path.join("artifacts", "test.csv")
 
 
 class DataIngestion:
     def __init__(self) -> None:
         self.ingestion_config = DataIngestionConfig()
 
-    def initiate_data_ingestion(self):
+    def initiate_ingestion(self):
         logging.info("Data ingestion initiated")
         try:
             df = pd.read_csv("notebook/data/stud.csv")
@@ -49,4 +51,8 @@ class DataIngestion:
 
 
 if __name__ == "__main__":
-    DataIngestion().initiate_data_ingestion()
+    obj = DataIngestion()
+    train_data_pth, test_data_pth = obj.initiate_ingestion()
+    
+    transformer = DataTransformation()
+    transformer.initiate_transformation(train_data_pth, test_data_pth)
