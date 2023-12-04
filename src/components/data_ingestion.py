@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from sklearn.model_selection import train_test_split
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
+from src.components.model_trainer import ModelTrainer
+from src.components.model_trainer import ModelTrainerConfig
 from src.exception import CustomException
 from src.logger import logging
 
@@ -18,7 +20,7 @@ class DataIngestionConfig:
 
 
 class DataIngestion:
-    def __init__(self) -> None:
+    def __init__(self):
         self.ingestion_config = DataIngestionConfig()
 
     def initiate_ingestion(self):
@@ -27,7 +29,9 @@ class DataIngestion:
             df = pd.read_csv("notebook/data/stud.csv")
             logging.info("Read dataset as dataframe")
 
-            os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path))
+            os.makedirs(
+                os.path.dirname(self.ingestion_config.raw_data_path), exist_ok=True
+            )
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
 
             logging.info("train-test split initiated")
@@ -52,7 +56,10 @@ class DataIngestion:
 
 if __name__ == "__main__":
     obj = DataIngestion()
-    train_data_pth, test_data_pth = obj.initiate_ingestion()
-    
+    train_path, test_path = obj.initiate_ingestion()
+
     transformer = DataTransformation()
-    transformer.initiate_transformation(train_data_pth, test_data_pth)
+    train_arr, test_arr, _ = transformer.initiate_transformation(train_path, test_path)
+    
+    trainer = ModelTrainer()
+    print(trainer.initiate_training(train_arr, test_arr))

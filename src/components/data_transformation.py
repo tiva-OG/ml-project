@@ -19,27 +19,27 @@ class DataTransformationConfig:
 
 
 class DataTransformation:
-    def __init__(self) -> None:
+    def __init__(self):
         self.transformation_config = DataTransformationConfig()
-
-        self.num_features = ["writing_score", "reading_score"]
-        self.cat_features = [
-            "gender",
-            "race_ethnicity",
-            "parental_level_of_education",
-            "lunch",
-            "test_preparation_course",
-        ]
 
     def get_transformer_obj(self):
         """
         This function is responsible for building the data transformer object (preprocessor)
 
         Returns:
-            preprocess: transformer object for manipulating data
+            preprocessor: transformer object for manipulating data
         """
 
         try:
+            num_features = ["writing_score", "reading_score"]
+            cat_features = [
+                "gender",
+                "race_ethnicity",
+                "parental_level_of_education",
+                "lunch",
+                "test_preparation_course",
+            ]
+
             num_pipeline = Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="median")),
@@ -50,23 +50,22 @@ class DataTransformation:
                 steps=[
                     ("imputer", SimpleImputer(strategy="most_frequent")),
                     ("one_hot_encoder", OneHotEncoder()),
-                    ("scaler", StandardScaler()),
+                    ("scaler", StandardScaler(with_mean=False)),
                 ]
             )
 
-            # logging.info("Numerical features' standard-scaling completed")
-            # logging.info("Categorical features' one-hot encoding completed")
-            logging.info(f"Numerical features: {self.num_features}")
-            logging.info(f"Categorical features: {self.cat_features}")
+            logging.info(f"Numerical features: {num_features}")
+            logging.info(f"Categorical features: {cat_features}")
 
             preprocessor = ColumnTransformer(
                 [
-                    ("numerical_pipeline", num_pipeline, self.num_features),
-                    ("categorical_pipeline", cat_pipeline, self.cat_features),
+                    ("num_pipeline", num_pipeline, num_features),
+                    ("cat_pipeline", cat_pipeline, cat_features),
                 ]
             )
 
             return preprocessor
+
         except Exception as e:
             raise CustomException(e, sys)
 
@@ -93,15 +92,15 @@ class DataTransformation:
             input_train_arr = preprocessor.fit_transform(input_train_df)
             input_test_arr = preprocessor.transform(input_test_df)
 
-            train_arr = np.c_[(input_train_arr, np.array(target_train_df))]
-            test_arr = np.c_[(input_test_arr, np.array(target_test_df))]
-
-            logging.info("Saved preprocessing object")
+            train_arr = np.c_[input_train_arr, np.array(target_train_df)]
+            test_arr = np.c_[input_test_arr, np.array(target_test_df)]
 
             save_object(
                 file_path=self.transformation_config.preprocessor_obj_file_path,
                 obj=preprocessor,
             )
+
+            logging.info("Saved preprocessing object")
 
             return (
                 train_arr,
@@ -109,5 +108,5 @@ class DataTransformation:
                 self.transformation_config.preprocessor_obj_file_path,
             )
 
-        except:
-            pass
+        except Exception as e:
+            CustomException(e, sys)
